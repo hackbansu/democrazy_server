@@ -1,0 +1,31 @@
+{
+  "name": "democrazy_server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hackbansu/democrazy_server.git"
+  },
+  "author": "pawan bansal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hackbansu/democrazy_server/issues"
+  },
+  "homepage": "https://github.com/hackbansu/democrazy_server#readme",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.15.4",
+    "express-session": "^1.15.5",
+    "mysql": "^2.14.1",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "plivo": "^0.4.1"
+  }
+}

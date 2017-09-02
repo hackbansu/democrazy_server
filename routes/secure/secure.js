@@ -120,6 +120,6 @@ function checkUserBasicDetails(req, res, next) {
 }
 route.use(checkUserBasicDetails);
 
-route.use('/user', routes.user);
+// route.use('/user', routes.user);
 
 module.exports = route;

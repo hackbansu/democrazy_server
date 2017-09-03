@@ -91,7 +91,7 @@ passport.deserializeUser(function (user, cb) {
 
 route.use(cookieParser());
 route.use(session({
-    secret: 'democrazy-server',
+    secret: EXPRESS_SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
 }));

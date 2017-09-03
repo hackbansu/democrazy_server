@@ -3,10 +3,10 @@ const mysql = require('mysql');
 {
     const dbPoolConf = {
         connectionLimit: 100,
-        host: 'localhost',
-        user: 'root',
-        password: 'bansal26',
-        database: 'democrazy',
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: process.env.DB_DATABASE,
     };
     const pool = mysql.createPool(dbPoolConf);
 

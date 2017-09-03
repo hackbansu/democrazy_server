@@ -4,8 +4,8 @@ const db = require('./../../../database/JS/db');
 const validateReqParams = require('../../../myJsModules/validation/reqParams');
 const plivo = require('plivo');
 const smsService = plivo.RestAPI({
-    authId: 'MAZTE3ZMYWOGQXNZAYOG',
-    authToken: 'NGZiYThhYWJiYzg0MmJkZDBkMjk1NzNmMDlhM2Uw'
+    authId: process.env.PLIVO_authId,
+    authToken: process.env.PLIVO_authToken,
 });
 
 //function to generate an OTP

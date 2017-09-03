@@ -6,10 +6,11 @@ const route = express.Router();
 //req.query = {}
 route.get('/getAllStates', function (req, res) {
     db.states_table.getAllStates(function (err, result) {
-        if(err){
+        if (err) {
+            console.log(err);
             return res.status(404).json({status: false, msg: "error in database"});
         }
-        return res.status(200).json({status: true, msg: "success", result: result});
+        return res.status(200).json({status: true, msg: result});
     })
 })
 

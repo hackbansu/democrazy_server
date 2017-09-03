@@ -20,7 +20,7 @@ CREATE TABLE localities (
 
 CREATE TABLE users (
 	id INT UNSIGNED auto_increment primary key NOT NULL,
-	fullName varchar(40) NOT NULL,
+	fullName varchar(40),
 	dob DATETIME,
 	gender CHAR(1),
 	email varchar(150) UNIQUE,
@@ -112,8 +112,7 @@ CREATE TABLE temp_users (
 	id INT UNSIGNED auto_increment primary key NOT NULL,
 	phone BIGINT UNSIGNED NOT NULL UNIQUE,
 	user_id INT UNSIGNED,
-	otp INT UNSIGNED NOT NULL,
-	timeout_id INT UNSIGNED,
+	otp INT UNSIGNED NOT NULL,	
 
 	FOREIGN KEY fk_user_id(user_id)
 	REFERENCES users(id)

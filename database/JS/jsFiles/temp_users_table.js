@@ -13,7 +13,7 @@ function getUsersDetails(identity, details, cb) {
             return cb(err, null);
         }
 
-        connection.query(sql, function (err, result, fields) {
+        connection.query(sql, [details], function (err, result, fields) {
             connection.release();
             if (err) {
                 return cb(err, null);
@@ -47,7 +47,7 @@ function deleteUsers(identity, cb) {
 //function to create a temporary user
 //params = {identity: Object}
 function createOrUpdateUser(identity, cb) {
-    let sql = 'INSERT INTO temp_users SET ? ON DUPLICATE KEY UPDATE SET ?';
+    let sql = 'INSERT INTO temp_users SET ? ON DUPLICATE KEY UPDATE ?';
 
     pool.getConnection(function (err, connection) {
         if (err) {

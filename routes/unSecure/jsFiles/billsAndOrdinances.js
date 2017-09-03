@@ -13,22 +13,24 @@ route.get('/billsOrdinances', function (req, res) {
     let count = parseInt(req.query.count);
 
     //validation of params (type, state_central_ids, offset, count)
-    let validation;
     let integ = state_central_ids.map(function (val, index, arr) {
-        return {val: val, min: 0, max: Number.MAX_SAFE_INTEGER};
+        return {val: val, minVal: 0, maxVal: Number.MAX_SAFE_INTEGER};
     });
-    integ.push({val: type, min: 0, max: 3});
-    integ.push({val: offset, min: 0, max: Number.MAX_SAFE_INTEGER});
-    integ.push({val: count, min: 1, max: 100});
-    if (validation = validateReqParams({integ: integ})) {
+    integ.push({val: type, minVal: 0, maxVal: 3});
+    integ.push({val: offset, minVal: 0, maxVal: Number.MAX_SAFE_INTEGER});
+    integ.push({val: count, minVal: 1, maxVal: 100});
+    let validation = validateReqParams({integ: integ});
+    if (validation) {
+        console.log(validation);
         return res.status(404).json({status: false, msg: "invalid params"});
     }
 
     db.bills_ordinances_table.getBillsAndOrdinances(type, state_central_ids, offset, count, function (err, result) {
         if (err) {
+            console.log(err);
             return res.status(404).json({status: false, msg: "error in database"});
         }
-        return res.status(200).json({status: true, msg: "success", result: result});
+        return res.status(200).json({status: true, msg: result});
     })
 })
 
@@ -38,16 +40,18 @@ route.get('/billOrdinanceDetails', function (req, res) {
     let id = parseInt(req.query.id);
 
     //validation of params (id)
-    let validation;
-    if (validation = validateReqParams({integ: {val: id, min: 1, max: Number.MAX_SAFE_INTEGER}})) {
+    let validation = validateReqParams({integ: [{val: id, minVal: 1, maxVal: Number.MAX_SAFE_INTEGER}]});
+    if (validation) {
+        console.log(validation);
         return res.status(404).json({status: false, msg: "invalid bill id"});
     }
 
     db.bills_ordinances_table.getBillOrdinanceDetails(id, function (err, result) {
         if (err) {
+            console.log(err);
             return res.status(404).json({status: false, msg: "error in database"});
         }
-        return res.status(200).json({status: true, msg: "success", result: result});
+        return res.status(200).json({status: true, msg: result});
     })
 })
 

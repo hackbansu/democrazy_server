@@ -4,13 +4,13 @@ const db = require('./../../../database/JS/db');
 const validateReqParams = require('../../../myJsModules/validation/reqParams');
 const plivo = require('plivo');
 const smsService = plivo.RestAPI({
-    authId: 'MAYWIWMZMWY2Y5ZGY3MD',
-    authToken: 'M2MzZjUwMWJlMjJiNDBhMzYyY2JmZDU0NmRkMWE1'
+    authId: 'MAZTE3ZMYWOGQXNZAYOG',
+    authToken: 'NGZiYThhYWJiYzg0MmJkZDBkMjk1NzNmMDlhM2Uw'
 });
 
 //function to generate an OTP
 function generateOtp() {
-    let otp = Math.random() * 999999;
+    let otp = parseInt(Math.random() * 999999);
     if (otp < 100000) {
         otp += 100000;
     }
@@ -22,14 +22,13 @@ function generateOtp() {
 function setTimeoutForOtp(identity) {
     //setting timeout to discard otp
     let timeoutTime = 180000;
-    let timeoutId;
     let timeoutCb = function (err, result) {
         if (err) {
             console.log('error discarding otp for ', identity,
                 "\nHaving error: ", err);
         }
     };
-    timeoutId = setTimeout(db.temp_users_table.deleteUsers, timeoutTime, identity, timeoutCb);
+    let timeoutId = setTimeout(db.temp_users_table.deleteUsers, timeoutTime, identity, timeoutCb);
     return timeoutId;
 }
 
@@ -57,8 +56,9 @@ route.post('/sendNew', function (req, res) {
     let phone = parseInt(req.body.phone);
 
     //validation of params (phone)
-    let validation;
-    if (validation = validateReqParams({integ: [{val: phone, min: 1000000000, max: 9999999999}]})) {
+    let validation = validateReqParams({integ: [{val: phone, minVal: 1000000000, maxVal: 9999999999}]});
+    if (validation) {
+        console.log(validation);
         return res.status(404).json({status: false, msg: "invalid phone number"});
     }
 
@@ -72,6 +72,7 @@ route.post('/sendNew', function (req, res) {
     //check for user availability in users table
     db.users_table.getUsersDetails({phone: phone}, ['id'], function (err, result) {
         if (err) {
+            console.log(err);
             return res.status(404).json({status: false, msg: "error in database"});
         }
         if (result.length !== 0) {
@@ -79,17 +80,19 @@ route.post('/sendNew', function (req, res) {
             newEntry['user_id'] = result[0].id;
         }
         // set timeout. Create or update user entry in temp_users and send otp
-        newEntry['timeout_id'] = setTimeoutForOtp(newEntry);
+        let timeOut = setTimeoutForOtp(newEntry);
         db.temp_users_table.createOrUpdateUser(newEntry, function (err, result) {
             if (err) {
-                clearTimeout(newEntry['timeout_id']);
+                clearTimeout(timeOut);
+                console.log(err);
                 return res.status(404).json({status: false, msg: "error in database"});
             }
             sendOtp(newEntry, function (err, result) {
                 if (err) {
+                    console.log(err);
                     return res.status(404).json({status: false, msg: "error sending otp"});
                 }
-                return res.status(200).json({status: true, msg: "success", result: result['message']});
+                return res.status(200).json({status: true, msg: result['message']});
             })
         })
     });

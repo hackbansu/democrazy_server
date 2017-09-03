@@ -29,10 +29,10 @@ CREATE TABLE users (
 	locality_id_F_I INT UNSIGNED,		#locality id for the financial inclusions to see
 	state_id_O_Polls INT UNSIGNED,		#State id opted for the opinion polls
 	attempts_left_state_change_OP TINYINT UNSIGNED NOT NULL DEFAULT 2,		#number of attempts left to change state for opinion polls (2 times in 2 months)
-	last_OP_date DATETIME NOT NULL DEFAULT 2017-08-28 00:00:00,			#last date of submitting an opinion poll
+	last_OP_date DATETIME NOT NULL DEFAULT "2017-08-28 00:00:00",			#last date of submitting an opinion poll
 
 	FOREIGN KEY fk_locality_id_F_I(locality_id_F_I)
-	REFERENCES locality(id)
+	REFERENCES localities(id)
 	ON UPDATE CASCADE
 	ON DELETE SET NULL,
 

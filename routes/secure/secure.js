@@ -89,7 +89,7 @@ passport.deserializeUser(function (user, cb) {
 
 })
 
-route.use(cookieParser());
+route.use(cookieParser(process.env.EXPRESS_SESSION_SECRET));
 route.use(session({
     secret: process.env.EXPRESS_SESSION_SECRET,
     resave: false,
@@ -101,6 +101,7 @@ route.use(passport.session());
 //request to login
 //req.body = {phone, otp}
 route.post('/loginNow', function (req, res, next) {
+    console.log("req cookies: ",req.cookies);
     passport.authenticate('local', function (err, user, info) {
         if (err) {
             console.log(err);
@@ -114,6 +115,7 @@ route.post('/loginNow', function (req, res, next) {
                 console.log(err);
                 return res.status(404).json({status: false, msg: "database error"});
             }
+            console.log("req cookies: ",req.cookies);
             return res.status(200).json({status: true, msg: info['message']});
         });
     })(req, res, next);
@@ -123,6 +125,7 @@ route.use('/otp', routes.otp);
 function checkUser(req, res, next) {
     if (req['user']) {
         console.log("User authenticated at " + route.baseUrl);
+        console.log("req cookies: ",req.cookies);
         return next();
     }
     else {
@@ -145,6 +148,6 @@ function checkUserBasicDetails(req, res, next) {
 
 route.use(checkUserBasicDetails);
 
-// route.use('/user', routes.user);
+route.use('/user', routes.user);
 
 module.exports = route;

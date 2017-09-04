@@ -8,7 +8,7 @@ route.get('/getAllStates', function (req, res) {
     db.states_table.getAllStates(function (err, result) {
         if (err) {
             console.log(err);
-            return res.status(404).json({status: false, msg: "error in database"});
+            return res.status(503).json({status: false, msg: "error in database"});
         }
         return res.status(200).json({status: true, msg: result});
     })

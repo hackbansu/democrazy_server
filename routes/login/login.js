@@ -31,7 +31,7 @@ passport.use(new LocalStrategy({
 
     db.temp_users_table.getUsersDetails(identity, ['*'], function (err, result) {
         if (err) {
-            return cb(err, false, {message: "database error"});
+            return cb(err, false, {message: "error in database"});
         }
         if (result.length === 0) {
             return cb(null, false, {message: 'invalid credentials'});
@@ -41,17 +41,17 @@ passport.use(new LocalStrategy({
         if (tempUser.user_id) {
             //old user
             //retrieve the user data and send in response
-            db.users_table.getUsersDetails({phone: tempUser.phone}, ["*"], function (err, result) {
+            db.users_table.getUsersDetails({id: tempUser.user_id}, ["*"], function (err, result) {
                 if (err) {
-                    return cb(err, false, {message: "database error"});
+                    return cb(err, false, {message: "error in database"});
                 }
                 if (result.length === 0) {
-                    return cb(err, false, {message: "some error occurred in database"});
+                    return cb("error", false, {message: "error in database"});
                 }
                 if (result[0]['fullName']) {
-                    return cb(null, {phone: result[0]['phone']}, {message: result[0]});
+                    return cb(null, {id: result[0]['id']}, {message: result[0]});
                 } else {
-                    return cb(null, {phone: result[0]['phone']}, {message: "request other details"});
+                    return cb(null, {id: result[0]['id']}, {message: "request other details"});
                 }
             })
         } else {
@@ -59,32 +59,31 @@ passport.use(new LocalStrategy({
             //creating new user in users table
             db.users_table.createUser({phone: tempUser.phone}, function (err, result) {
                 if (err) {
-                    return cb(err, false, {message: "database error"});
+                    return cb(err, false, {message: "error in database"});
                 }
-                return cb(null, {phone: tempUser.phone}, {message: "request other details"});
+
+                return cb(null, {id: result['insertId']}, {message: "request other details"});
             })
         }
     })
 }));
 passport.serializeUser(function (user, cb) {
     return cb(null, {
-        phone: user.phone,
+        id: user.id,
     });
 });
 passport.deserializeUser(function (user, cb) {
-    //get id, fullName of user from database
-    db.users_table.getUsersDetails({phone: user['phone']}, ['id', 'phone', 'fullName'], function (err, result) {
+    //get all details of user from database
+    db.users_table.getUsersDetails({id: user['id']}, ['*'], function (err, result) {
         if (err) {
             return cb(err, null);
         }
-        return cb(null, {
-            id: result[0]['id'],
-            phone: result[0]['phone'],
-            fullName: result[0]['fullName']
-        });
+        if(result.length === 0){
+            return cb("error", null);
+        }
+        return cb(null, result[0]);
     });
-
-})
+});
 
 route.use(cookieParser(process.env.EXPRESS_SESSION_SECRET));
 route.use(session({
@@ -102,7 +101,7 @@ route.use('/secure', routes.secure);
 //handling login related requests
 function checkUser(req, res, next) {
     if (req['user']) {
-        return res.status(404).json({status: false, msg: "user already logged in"});
+        return res.status(403).json({status: false, msg: "user already logged in"});
     }
     else {
         return next();
@@ -117,15 +116,15 @@ route.post('/loginNow', function (req, res, next) {
     passport.authenticate('local', function (err, user, info) {
         if (err) {
             console.log(err);
-            return res.status(404).json({status: false, msg: info['message']});
+            return res.status(503).json({status: false, msg: info['message']});
         }
         if (!user) {
-            return res.status(401).json({status: false, msg: info['message']});
+            return res.status(404).json({status: false, msg: info['message']});
         }
         req.logIn(user, function (err) {
             if (err) {
                 console.log(err);
-                return res.status(404).json({status: false, msg: "database error"});
+                return res.status(503).json({status: false, msg: "error in database"});
             }
             return res.status(200).json({status: true, msg: info['message']});
         });

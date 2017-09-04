@@ -5,17 +5,25 @@ const validateReqParams = require('../../../myJsModules/validation/reqParams');
 const routes = {
     firstLogin: require('./jsFiles/firstLogin'),
     user: require('./jsFiles/user'),
+    opinionPolls: require('./jsFiles/opinionPolls'),
 };
 
+//function to check if user is logged in or not
+//every post request should contain phone in body
 function checkUser(req, res, next) {
     if (req['user']) {
-        console.log("User authenticated at " + route.baseUrl);
-        return next();
+        if (Object.keys(req.body).length === 0) {
+            console.log("User authenticated for get request at " + route.baseUrl);
+            return next();
+        }
+        let phone = parseInt(req.body.phone);
+        if (phone === req['user']['phone']) {
+            console.log("User authenticated for post request at " + route.baseUrl);
+            return next();
+        }
     }
-    else {
-        console.log("User NOT authenticated at " + route.baseUrl);
-        return res.status(404).json({status: false, msg: "user not logged in"});
-    }
+    console.log("User NOT authenticated at " + route.baseUrl);
+    return res.status(401).json({status: false, msg: "user not logged in"});
 }
 
 route.use(checkUser);
@@ -26,12 +34,14 @@ function checkUserBasicDetails(req, res, next) {
     if (req['user']['fullName']) {
         return next();
     } else {
-        return res.status(404).json({status: false, msg: "please complete first login process"});
+        return res.status(403).json({status: false, msg: "please complete first login process"});
     }
 }
 
 route.use(checkUserBasicDetails);
 
 route.use('/user', routes.user);
+route.use('/opinionPolls', routes.opinionPolls);
+
 
 module.exports = route;

@@ -59,7 +59,7 @@ route.post('/sendNew', function (req, res) {
     let validation = validateReqParams({integ: [{val: phone, minVal: 1000000000, maxVal: 9999999999}]});
     if (validation) {
         console.log(validation);
-        return res.status(404).json({status: false, msg: "invalid phone number"});
+        return res.status(400).json({status: false, msg: "invalid params"});
     }
 
     //generating an OTP
@@ -73,7 +73,7 @@ route.post('/sendNew', function (req, res) {
     db.users_table.getUsersDetails({phone: phone}, ['id'], function (err, result) {
         if (err) {
             console.log(err);
-            return res.status(404).json({status: false, msg: "error in database"});
+            return res.status(503).json({status: false, msg: "error in database"});
         }
         if (result.length !== 0) {
             //old user
@@ -85,12 +85,12 @@ route.post('/sendNew', function (req, res) {
             if (err) {
                 clearTimeout(timeOut);
                 console.log(err);
-                return res.status(404).json({status: false, msg: "error in database"});
+                return res.status(503).json({status: false, msg: "error in database"});
             }
             sendOtp(newEntry, function (err, result) {
                 if (err) {
                     console.log(err);
-                    return res.status(404).json({status: false, msg: "error sending otp"});
+                    return res.status(503).json({status: false, msg: "error sending otp"});
                 }
                 return res.status(200).json({status: true, msg: result['message']});
             })

@@ -22,13 +22,13 @@ route.get('/billsOrdinances', function (req, res) {
     let validation = validateReqParams({integ: integ});
     if (validation) {
         console.log(validation);
-        return res.status(404).json({status: false, msg: "invalid params"});
+        return res.status(400).json({status: false, msg: "invalid params"});
     }
 
     db.bills_ordinances_table.getBillsAndOrdinances(type, state_central_ids, offset, count, function (err, result) {
         if (err) {
             console.log(err);
-            return res.status(404).json({status: false, msg: "error in database"});
+            return res.status(503).json({status: false, msg: "error in database"});
         }
         return res.status(200).json({status: true, msg: result});
     })
@@ -43,13 +43,13 @@ route.get('/billOrdinanceDetails', function (req, res) {
     let validation = validateReqParams({integ: [{val: id, minVal: 1, maxVal: Number.MAX_SAFE_INTEGER}]});
     if (validation) {
         console.log(validation);
-        return res.status(404).json({status: false, msg: "invalid bill id"});
+        return res.status(400).json({status: false, msg: "invalid params"});
     }
 
     db.bills_ordinances_table.getBillOrdinanceDetails(id, function (err, result) {
         if (err) {
             console.log(err);
-            return res.status(404).json({status: false, msg: "error in database"});
+            return res.status(503).json({status: false, msg: "error in database"});
         }
         return res.status(200).json({status: true, msg: result});
     })

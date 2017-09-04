@@ -8,7 +8,7 @@ const validateReqParams = require('../../../../myJsModules/validation/reqParams'
 //req.body = {fullName, dob:"yyyy-mm-dd", gender, email, pinCode}
 route.post('/submitDetails', function (req, res) {
     if (req['user']['fullName']) {
-        return res.status(404).json({status: false, msg: "First login submission already done"});
+        return res.status(403).json({status: false, msg: "First login submission already done"});
     }
 
     let updates = {
@@ -18,6 +18,9 @@ route.post('/submitDetails', function (req, res) {
         email: req.body.email,
         pinCode: parseInt(req.body.pinCode),
     }
+    updates['locality_id_F_I'] = updates.pinCode;
+    updates['state_id_O_Polls'] = updates.pinCode;
+
     let phone = parseInt(req['user'].phone);
 
     //validation of params (fullName, dob, gender, email, pinCode, phone)
@@ -30,13 +33,13 @@ route.post('/submitDetails', function (req, res) {
     });
     if (validation) {
         console.log(validation);
-        return res.status(404).json({status: false, msg: "invalid params"});
+        return res.status(400).json({status: false, msg: "invalid params"});
     }
 
     db.users_table.updateUsersDetails({phone: phone}, updates, function (err, result) {
         if (err) {
             console.log(err);
-            return res.status(404).json({status: false, msg: "error updating details"});
+            return res.status(503).json({status: false, msg: "error in database"});
         }
         return res.status(200).json({status: true, msg: result['message']});
     })

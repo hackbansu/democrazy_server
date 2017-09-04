@@ -18,6 +18,9 @@ app.use('/unSecure', routes.unSecure);
 app.get('/', function (req, res) {
     res.send("server Working");
 })
+app.use('/', function (req, res) {
+    res.send("invalid request");
+})
 
 app.listen(process.env.PORT, function () {
     console.log("server started at port number " + process.env.PORT);

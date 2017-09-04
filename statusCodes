@@ -1,0 +1,31 @@
+400 Bad Request
+    This response means that server could not understand the request due to invalid syntax.
+
+401 Unauthorized 
+    Although the HTTP standard specifies "unauthorized", semantically this response means "unauthenticated". That is, the client must authenticate itself to get the requested response.
+
+403 Forbidden
+    The client does not have access rights to the content, i.e. they are unauthorized, so server is rejecting to give proper response. Unlike 401, the client's identity is known to the server.
+
+404 Not Found
+    The server can not find requested resource. In the browser, this means the URL is not recognized. In an API, this can also mean that the endpoint is valid but the resource itself does not exist. Servers may also send this response instead of 403 to hide the existence of a resource from an unauthorized client. This response code is probably the most famous one due to its frequent occurence on the web.
+
+406 Not Acceptable
+    This response is sent when the web server, after performing server-driven content negotiation, doesn't find any content following the criteria given by the user agent.
+
+500 Internal Server Error
+    The server has encountered a situation it doesn't know how to handle.
+
+503 Service Unavailable
+    The server is not ready to handle the request. Common causes are a server that is down for maintenance or that is overloaded. Note that together with this response, a user-friendly page explaining the problem should be sent. This responses should be used for temporary conditions and the Retry-After: HTTP header should, if possible, contain the estimated time before the recovery of the service. The webmaster must also take care about the caching-related headers that are sent along with this response, as these temporary condition responses should usually not be cached.
+
+
+invalid params    -- 400
+database error    -- 503
+invalid credentials    -- 404
+not logged in    -- 401
+already logged in    -- 403
+some internal error    -- 500
+error sending otp    -- 503
+first login submission already done    -- 403
+please complete first login process    -- 403

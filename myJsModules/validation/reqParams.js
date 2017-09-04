@@ -32,7 +32,7 @@ function reqParams(params) {
             if (!obj.val || obj.val.length < obj.minLen.length || obj.val.length > obj.maxLen.length) {
                 return "invalid email values";
             }
-            let indexOfAt = obj.val.indexOf('@'), indexOfDot = obj.val.indexOf('.');
+            let indexOfAt = obj.val.indexOf('@'), indexOfDot = obj.val.lastIndexOf('.');
             if (indexOfAt === -1 || indexOfDot < indexOfAt) {
                 return "invalid email values";
             }

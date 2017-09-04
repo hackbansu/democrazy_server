@@ -3,16 +3,13 @@ const route = express.Router();
 const cookieParser = require('cookie-parser');
 const passport = require('passport'), passportLocal = require('passport-local');
 const session = require('express-session');
-
 const LocalStrategy = passportLocal.Strategy;
 const db = require('./../../database/JS/db');
 const validateReqParams = require('../../myJsModules/validation/reqParams');
 const routes = {
     otp: require('./jsFiles/otp'),
-    firstLogin: require('./jsFiles/firstLogin'),
-    user: require('./jsFiles/user'),
+    secure: require('./secure/secure')
 };
-
 
 passport.use(new LocalStrategy({
     usernameField: 'phone',
@@ -52,7 +49,7 @@ passport.use(new LocalStrategy({
                     return cb(err, false, {message: "some error occurred in database"});
                 }
                 if (result[0]['fullName']) {
-                    return cb(null, {phone: result[0]['phone']}, {message: JSON.stringify(result[0])});
+                    return cb(null, {phone: result[0]['phone']}, {message: result[0]});
                 } else {
                     return cb(null, {phone: result[0]['phone']}, {message: "request other details"});
                 }
@@ -98,10 +95,25 @@ route.use(session({
 route.use(passport.initialize());
 route.use(passport.session());
 
+//handling requests of logged in user
+route.use('/secure', routes.secure);
+
+
+//handling login related requests
+function checkUser(req, res, next) {
+    if (req['user']) {
+        return res.status(404).json({status: false, msg: "user already logged in"});
+    }
+    else {
+        return next();
+    }
+}
+
+route.use(checkUser);
+
 //request to login
 //req.body = {phone, otp}
 route.post('/loginNow', function (req, res, next) {
-    console.log("req cookies: ",req.cookies);
     passport.authenticate('local', function (err, user, info) {
         if (err) {
             console.log(err);
@@ -115,39 +127,10 @@ route.post('/loginNow', function (req, res, next) {
                 console.log(err);
                 return res.status(404).json({status: false, msg: "database error"});
             }
-            console.log("req cookies: ",req.cookies);
             return res.status(200).json({status: true, msg: info['message']});
         });
     })(req, res, next);
 });
 route.use('/otp', routes.otp);
-
-function checkUser(req, res, next) {
-    if (req['user']) {
-        console.log("User authenticated at " + route.baseUrl);
-        console.log("req cookies: ",req.cookies);
-        return next();
-    }
-    else {
-        console.log("User NOT authenticated at " + route.baseUrl);
-        return res.status(404).json({status: false, msg: "user not logged in"});
-    }
-}
-
-route.use(checkUser);
-
-route.use('/firstLogin', routes.firstLogin);
-
-function checkUserBasicDetails(req, res, next) {
-    if (!req['user']['fullName']) {
-        return res.status(404).json({status: false, msg: "please complete first login process"});
-    } else {
-        return next();
-    }
-}
-
-route.use(checkUserBasicDetails);
-
-route.use('/user', routes.user);
 
 module.exports = route;

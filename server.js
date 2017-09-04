@@ -9,11 +9,11 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 
 const routes = {
-    secure: require('./routes/secure/secure'),
+    login: require('./routes/login/login'),
     unSecure: require('./routes/unSecure/unSecure')
 };
 
-app.use('/secure', routes.secure);
+app.use('/login', routes.login);
 app.use('/unSecure', routes.unSecure);
 app.get('/', function (req, res) {
     res.send("server Working");

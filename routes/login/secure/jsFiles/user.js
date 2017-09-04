@@ -1,7 +1,7 @@
 const express = require('express');
 const route = express.Router();
-const db = require('./../../../database/JS/db');
-const validateReqParams = require('../../../myJsModules/validation/reqParams');
+const db = require('../../../../database/JS/db');
+const validateReqParams = require('../../../../myJsModules/validation/reqParams');
 
 //function to send user details
 //req.query = {}
@@ -16,5 +16,11 @@ route.get('/getDetails', function (req, res) {
         return res.status(200).json({status: true, msg: result[0]});
     })
 });
+
+//function to logout a user
+route.get('/logout', function (req, res) {
+    req.logout();
+    return res.status(200).json({status: true, msg: "logout success"});
+})
 
 module.exports = route;

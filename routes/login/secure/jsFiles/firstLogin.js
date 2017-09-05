@@ -16,9 +16,8 @@ route.post('/submitDetails', function (req, res) {
         dob: new Date(req.body.dob),
         gender: req.body.gender,
         email: req.body.email,
-        pinCode: parseInt(req.body.pinCode),
     }
-
+    let pinCode = parseInt(req.body.pinCode);
     let phone = parseInt(req['user'].phone);
 
     //validation of params (fullName, dob, gender, email, pinCode, phone)
@@ -27,7 +26,7 @@ route.post('/submitDetails', function (req, res) {
         dates: [{val: updates.dob, above18: true}],
         genders: [{val: updates.gender}],
         emails: [{val: updates.email, minLen: 5, maxLen: 150}],
-        integ: [{val: updates.pinCode, minVal: 100000, maxVal: 999999}],
+        integ: [{val: pinCode, minVal: 100000, maxVal: 999999}],
     });
     if (validation) {
         console.log(validation);
@@ -35,13 +34,12 @@ route.post('/submitDetails', function (req, res) {
     }
 
     //getting stateId and localityId based on pinCode received
-    db.localities_table.getLocalities({pinCode: updates.pinCode}, ['*'], function (err, result) {
+    db.localities_table.getLocalities({pinCode: pinCode}, ['*'], function (err, result) {
         if (err) {
             console.log(err);
             return res.status(503).json({status: false, msg: "error in database"});
         }
-        if(result.length === 0){
-            console.log(validation);
+        if (result.length === 0) {
             return res.status(400).json({status: false, msg: "invalid params"});
         }
 

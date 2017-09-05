@@ -3,7 +3,7 @@ const db = require('../db');
 const pool = db.pool;
 
 //function to serve a temporary user's specified details
-//params = {identity: Object, details: array}
+//params = {identity: Object, details: array, cb: function}
 function getUsersDetails(identity, details, cb) {
     let sql = 'SELECT ?? FROM temp_users ';
     sql = db.addWhereClause(sql, identity);
@@ -24,7 +24,7 @@ function getUsersDetails(identity, details, cb) {
 }
 
 //function to remove temporary users
-//params = {identity: Object}
+//params = {identity: Object, cb:function}
 function deleteUsers(identity, cb) {
     let sql = 'DELETE FROM temp_users ';
     sql = db.addWhereClause(sql, identity);
@@ -45,7 +45,7 @@ function deleteUsers(identity, cb) {
 }
 
 //function to create a temporary user
-//params = {identity: Object}
+//params = {identity: Object, cb: function}
 function createOrUpdateUser(identity, cb) {
     let sql = 'INSERT INTO temp_users SET ? ON DUPLICATE KEY UPDATE ?';
 

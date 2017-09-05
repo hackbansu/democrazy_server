@@ -5,7 +5,7 @@ const pool = db.pool;
 
 //function to serve count number of latest bills/ordinances details(id, name , date, state_central_id)
 // of given states after an offset
-//params = {state_central_ids: array}
+//params = {state_central_ids: array, offset, count, cb: function}
 function getBillsAndOrdinances(type, state_central_ids, offset, count, cb) {
     let sql = "SELECT t1.*, states.name AS state FROM ( "
     sql += 'SELECT id, name, date, state_central_id FROM bills_ordinances ' +
@@ -28,6 +28,8 @@ function getBillsAndOrdinances(type, state_central_ids, offset, count, cb) {
 }
 
 
+//function to serve all details of bill/ordinance
+//params = {id, cb: function}
 function getBillOrdinanceDetails(id, cb) {
     pool.getConnection(function (err, connection) {
         if (err) {

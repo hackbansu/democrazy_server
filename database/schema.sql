@@ -29,17 +29,22 @@ CREATE TABLE users (
 	locality_id_F_I INT UNSIGNED,		#locality id for the financial inclusions to see
 	state_id_O_Polls INT UNSIGNED,		#State id opted for the opinion polls
 	attempts_left_state_change_OP TINYINT UNSIGNED NOT NULL DEFAULT 2,		#number of attempts left to change state for opinion polls (2 times in 2 months)
-	last_OP_date DATETIME NOT NULL DEFAULT "2017-08-28 00:00:00",			#last date of submitting an opinion poll
+	last_OP_id INT UNSIGNED,			#last id of opinion poll submitted
 
 	FOREIGN KEY fk_locality_id_F_I(locality_id_F_I)
 	REFERENCES localities(id)
 	ON UPDATE CASCADE
-	ON DELETE SET NULL,
+	ON DELETE RESTRICT,
 
 	FOREIGN KEY fk_state_id_O_Polls(state_id_O_Polls)
 	REFERENCES states(id)
 	ON UPDATE CASCADE
-	ON DELETE SET NULL
+	ON DELETE RESTRICT,
+
+	FOREIGN KEY fk_last_OP_id(last_OP_id)
+	REFERENCES opinion_polls(id)
+	ON UPDATE CASCADE
+	ON DELETE RESTRICT,
 );
 
 CREATE TABLE users_opted_states_for_bills (

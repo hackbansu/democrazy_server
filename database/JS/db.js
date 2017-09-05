@@ -35,14 +35,14 @@ function addWhereClause(sql, identity) {
     let k = 0;
     for (let i in identity) {
         if (k !== 0) {
-            sql += " and";
+            sql += "and ";
         } else {
             k++;
         }
 
         //need 'IS' for null values otherwise '='
         let operator = identity[i] || identity[i] === 0 ? " = " : " IS ";
-        sql += " " + mysql.escapeId(i) + operator + mysql.escape(identity[i]);
+        sql += mysql.escapeId(i) + operator + mysql.escape(identity[i]) + " ";
     }
 
     return sql;

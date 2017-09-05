@@ -18,8 +18,6 @@ route.post('/submitDetails', function (req, res) {
         email: req.body.email,
         pinCode: parseInt(req.body.pinCode),
     }
-    updates['locality_id_F_I'] = updates.pinCode;
-    updates['state_id_O_Polls'] = updates.pinCode;
 
     let phone = parseInt(req['user'].phone);
 
@@ -36,13 +34,28 @@ route.post('/submitDetails', function (req, res) {
         return res.status(400).json({status: false, msg: "invalid params"});
     }
 
-    db.users_table.updateUsersDetails({phone: phone}, updates, function (err, result) {
+    //getting stateId and localityId based on pinCode received
+    db.localities_table.getLocalities({pinCode: updates.pinCode}, ['*'], function (err, result) {
         if (err) {
             console.log(err);
             return res.status(503).json({status: false, msg: "error in database"});
         }
-        return res.status(200).json({status: true, msg: result['message']});
-    })
+        if(result.length === 0){
+            console.log(validation);
+            return res.status(400).json({status: false, msg: "invalid params"});
+        }
+
+        updates['locality_id_F_I'] = result[0]['id'];
+        updates['state_id_O_Polls'] = result[0]['state_id'];
+
+        db.users_table.updateUsersDetails({phone: phone}, updates, function (err, result) {
+            if (err) {
+                console.log(err);
+                return res.status(503).json({status: false, msg: "error in database"});
+            }
+            return res.status(200).json({status: true, msg: result['message']});
+        })
+    });
 });
 
 module.exports = route;

@@ -2,6 +2,8 @@ const mysql = require('mysql');
 const db = require('../db');
 const pool = db.pool;
 
+//function to serve all states
+//params = {cb: function}
 function getAllStates(cb) {
     pool.getConnection(function (err, connection) {
         if (err) {

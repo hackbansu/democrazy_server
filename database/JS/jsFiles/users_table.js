@@ -3,8 +3,8 @@ const db = require('../db');
 const pool = db.pool;
 
 
-//function to serve a user's specified details
-//params = {identity: Object, details: array}
+//function to serve users specified details
+//params = {identity: Object, details: array, cb: function}
 function getUsersDetails(identity, details, cb) {
     let sql = 'SELECT ?? FROM users ';
     sql = db.addWhereClause(sql, identity);
@@ -25,7 +25,7 @@ function getUsersDetails(identity, details, cb) {
 }
 
 //function to serve a user's specified details
-//params = {identity: Object, updates: Object}
+//params = {identity: Object, updates: Object, cb: function}
 function updateUsersDetails(identity, updates, cb) {
     let sql = 'UPDATE users SET ? ';
     sql = db.addWhereClause(sql, identity);
@@ -45,8 +45,8 @@ function updateUsersDetails(identity, updates, cb) {
     })
 }
 
-//function to serve a user's specified details
-//params = {identity: Object, updates: Object}
+//function to delete a user
+//params = {identity: Object, cb: function}
 function deleteUsers(identity, cb) {
     let sql = 'DELETE FROM users ';
     sql = db.addWhereClause(sql, identity);
@@ -67,7 +67,7 @@ function deleteUsers(identity, cb) {
 }
 
 //function to create a new user with specified details
-//params = {identity: Object}
+//params = {identity: Object, cb: function}
 function createUser(identity, cb) {
     let sql = 'INSERT INTO users SET ? ';
 

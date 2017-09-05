@@ -33,7 +33,7 @@ function setTimeoutForOtp(identity) {
 }
 
 //function send otp to user
-//params = {identity: object(phone, otp)}
+//params = {identity: object(phone, otp), cb: function}
 function sendOtp(identity, cb) {
     //sending otp
     let params = {

@@ -8,7 +8,7 @@ const pool = db.pool;
 //params = {dateAfterwards: String, OP_id, stateId, details: array, count, cb: function}
 function getNewOpinionPolls(dateAfterwards, OP_id, stateId, details, count, cb) {
     let sql = 'SELECT ?? FROM opinion_polls WHERE id > ? AND date_end > ? ' +
-        'AND state_central_id IN (0, ?) LIMIT 0,? ';
+        'AND state_central_id IN (1, ?) LIMIT 0,? ';
 
     pool.getConnection(function (err, connection) {
         if (err) {
@@ -46,14 +46,15 @@ function getStateIdsForOPIds(OPIds, cb) {
 }
 
 
-//function to add new opinion poll
-//params = {identity: Object, cb: function}
-function addNew(ques, identity, cb) {
+//function to add new opinion polls
+//params = {data: array of identity Objects, cb: function}
+function addNewOpinionPolls(data, cb) {
     let sql = "INSERT INTO opinion_polls (question, state_central_id, date_start, date_end) VALUES ";
-    for (let i = 0; i < ques.length; i++) {
-        sql += "(" + mysql.escape(ques[i]) + ", " + mysql.escape(identity['state_central_id']) + ", "
-            + mysql.escape(identity['date_start']) + ", " + mysql.escape(identity['date_end']) + ")";
-        if (i !== ques.length - 1) {
+    for (let i = 0; i < data.length; i++) {
+        let obj = data[i];
+        sql += "(" + mysql.escape(obj['question']) + ", " + mysql.escape(obj['SCId']) + ", "
+            + mysql.escape(obj['dateStart']) + ", " + mysql.escape(obj['dateEnd']) + ")";
+        if (i !== data.length - 1) {
             sql += ", "
         }
     }
@@ -77,5 +78,5 @@ function addNew(ques, identity, cb) {
 module.exports = {
     getNewOpinionPolls,
     getStateIdsForOPIds,
-    addNew
+    addNewOpinionPolls
 };

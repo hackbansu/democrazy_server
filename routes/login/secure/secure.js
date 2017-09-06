@@ -3,6 +3,7 @@ const route = express.Router();
 const db = require('./../../../database/JS/db');
 const validateReqParams = require('../../../myJsModules/validation/reqParams');
 const routes = {
+    adminTasks: require('./jsFiles/adminTasks'),
     firstLogin: require('./jsFiles/firstLogin'),
     user: require('./jsFiles/user'),
     opinionPolls: require('./jsFiles/opinionPolls'),
@@ -43,5 +44,16 @@ route.use(checkUserBasicDetails);
 route.use('/user', routes.user);
 route.use('/opinionPolls', routes.opinionPolls);
 
+function checkAdmin(req, res, next) {
+    if (req['user']['phone'] === parseInt(process.env.ADMIN)) {
+        return next();
+    } else {
+        return res.status(403).json({status: false, msg: "user not logged in"});
+    }
+}
+
+route.use(checkAdmin);
+
+route.use('/adminTasks', routes.adminTasks);
 
 module.exports = route;

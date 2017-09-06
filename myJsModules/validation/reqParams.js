@@ -21,12 +21,13 @@ function reqParams(params) {
     }
 
     if (params['strs'] !== undefined) {
+        
         let strs = params['strs'];
         if(strs.length === 0){
             return "invalid string values";
         }
         for (obj of strs) {
-            if (!obj.val || obj.val.length < obj.minLen.length || obj.val.length > obj.maxLen.length) {
+            if (!obj.val || obj.val.length < obj.minLen || obj.val.length > obj.maxLen) {
                 return "invalid string values";
             }
         }
@@ -38,7 +39,7 @@ function reqParams(params) {
             return "invalid email values";
         }
         for (obj of emails) {
-            if (!obj.val || obj.val.length < obj.minLen.length || obj.val.length > obj.maxLen.length) {
+            if (!obj.val || obj.val.length < obj.minLen || obj.val.length > obj.maxLen) {
                 return "invalid email values";
             }
             let indexOfAt = obj.val.indexOf('@'), indexOfDot = obj.val.lastIndexOf('.');
@@ -71,7 +72,7 @@ function reqParams(params) {
             return "invalid gender values";
         }
         for (obj of genders) {
-            if (!obj.val || obj.val !== 'M' && obj.val !== 'F' && obj.val !== 'O') {
+            if (!obj.val || (obj.val !== 'M' && obj.val !== 'F' && obj.val !== 'O')) {
                 return "invalid gender values";
             }
         }

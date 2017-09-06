@@ -96,9 +96,11 @@ route.post('/submitPoll', function (req, res) {
 //req.query = {stateId}
 route.get('/changeState', function (req, res) {
     let attemptsLeft = req['user']['attempts_left_state_change_OP'];
+    //deny if attempts left to change state are zero
     if (attemptsLeft === 0) {
         return res.status(400).json({status: false, msg: "no more attempts left"});
     }
+    //decrementing attemptsLeft
     attemptsLeft--;
     let newStateId = parseInt(req.query.stateId);
 
@@ -112,11 +114,13 @@ route.get('/changeState', function (req, res) {
         return res.status(400).json({status: false, msg: "invalid params"});
     }
 
+    //getting the id of last OP submitted for new state
     db.opinion_polls_votes_table.getLastOPIdOfState(req['user']['id'], newStateId, function (err, result) {
         if (err) {
             console.log(err);
             return res.status(503).json({status: false, msg: "error in database"});
         }
+        //updating users table to set new stateId, last_OP_id, attemptsLeft
         db.users_table.updateUsersDetails({id: req['user']['id']}, {
             state_id_O_Polls: newStateId,
             last_OP_id: result[0].val,

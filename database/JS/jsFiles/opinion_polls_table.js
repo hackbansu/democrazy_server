@@ -25,6 +25,28 @@ function getNewOpinionPolls(dateAfterwards, OP_id, stateId, details, count, cb) 
     })
 }
 
+//function to serve stateIds for OPIds
+//params = {OPIds: array, cb: function}
+function getStateIdsForOPIds(OPIds, cb) {
+    let sql = 'SELECT DISTINCT state_central_id FROM opinion_polls WHERE id IN (?)';
+
+    pool.getConnection(function (err, connection) {
+        if (err) {
+            return cb(err, null);
+        }
+
+        connection.query(sql, [OPIds], function (err, result, fields) {
+            connection.release();
+            if (err) {
+                return cb(err, null);
+            }
+            return cb(null, result);
+        })
+    })
+}
+
+
 module.exports = {
-    getNewOpinionPolls
+    getNewOpinionPolls,
+    getStateIdsForOPIds
 };

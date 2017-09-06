@@ -31,7 +31,31 @@ function addVotes(userId, votes, cb) {
     })
 }
 
+//function to get last OP id submitted by a particular user for a particular state
+//params = {userId, stateId, cb: function}
+function getLastOPIdOfState(userId, stateId, cb) {
+    let sql = 'SELECT t1.*, state_central_id ' +
+        'FROM (SELECT opinion_poll_id FROM opinion_polls_votes WHERE user_id = ?) as t1 ' +
+        'LEFT JOIN opinion_polls ' +
+        'ON t1.opinion_poll_id = opinion_polls.id ';
+    sql = 'SELECT MAX(t2.opinion_poll_id) AS val FROM ( ' + sql + ') AS t2 WHERE t2.state_central_id = ? ';
+
+    pool.getConnection(function (err, connection) {
+        if (err) {
+            return cb(err, null);
+        }
+
+        connection.query(sql, [userId, stateId], function (err, result, fields) {
+            connection.release();
+            if (err) {
+                return cb(err, null);
+            }
+            return cb(null, result);
+        })
+    })
+}
 
 module.exports = {
-    addVotes
+    addVotes,
+    getLastOPIdOfState
 };

@@ -55,6 +55,7 @@ function getLastOPIdOfState(userId, stateId, cb) {
     })
 }
 
+
 module.exports = {
     addVotes,
     getLastOPIdOfState

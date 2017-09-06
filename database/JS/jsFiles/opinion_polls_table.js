@@ -46,7 +46,36 @@ function getStateIdsForOPIds(OPIds, cb) {
 }
 
 
+//function to add new opinion poll
+//params = {identity: Object, cb: function}
+function addNew(ques, identity, cb) {
+    let sql = "INSERT INTO opinion_polls (question, state_central_id, date_start, date_end) VALUES ";
+    for (let i = 0; i < ques.length; i++) {
+        sql += "(" + mysql.escape(ques[i]) + ", " + mysql.escape(identity['state_central_id']) + ", "
+            + mysql.escape(identity['date_start']) + ", " + mysql.escape(identity['date_end']) + ")";
+        if (i !== ques.length - 1) {
+            sql += ", "
+        }
+    }
+
+    pool.getConnection(function (err, connection) {
+        if (err) {
+            return cb(err, null);
+        }
+
+        connection.query(sql, function (err, result, fields) {
+            connection.release();
+            if (err) {
+                return cb(err, null);
+            }
+            return cb(null, result);
+        })
+    })
+}
+
+
 module.exports = {
     getNewOpinionPolls,
-    getStateIdsForOPIds
+    getStateIdsForOPIds,
+    addNew
 };

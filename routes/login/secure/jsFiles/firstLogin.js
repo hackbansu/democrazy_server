@@ -46,12 +46,19 @@ route.post('/submitDetails', function (req, res) {
         updates['locality_id_F_I'] = result[0]['id'];
         updates['state_id_O_Polls'] = result[0]['state_id'];
 
-        db.users_table.updateUsersDetails({phone: phone}, updates, function (err, result) {
+        //update data in users table
+        db.users_table.updateUsersDetails({id: req['user']['id']}, updates, function (err, result) {
             if (err) {
                 console.log(err);
                 return res.status(503).json({status: false, msg: "error in database"});
             }
-            return res.status(200).json({status: true, msg: result['message']});
+            db.users_table.timerToResetSCAL({phone: req['user']['phone']}, function (err, result) {
+                if (err) {
+                    console.log(err);
+                    return res.status(503).json({status: false, msg: "error in database"});
+                }
+                return res.status(200).json({status: true, msg: result['message']});
+            })
         })
     });
 });

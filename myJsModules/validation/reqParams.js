@@ -10,6 +10,9 @@
 function reqParams(params) {
     if (params['integ'] !== undefined) {
         let integ = params['integ'];
+        if(integ.length === 0){
+            return "invalid integer values";
+        }
         for (obj of integ) {
             if (!obj.val || obj.val < obj.minVal || obj.val > obj.maxVal) {
                 return "invalid integer values";
@@ -19,6 +22,9 @@ function reqParams(params) {
 
     if (params['strs'] !== undefined) {
         let strs = params['strs'];
+        if(strs.length === 0){
+            return "invalid string values";
+        }
         for (obj of strs) {
             if (!obj.val || obj.val.length < obj.minLen.length || obj.val.length > obj.maxLen.length) {
                 return "invalid string values";
@@ -28,6 +34,9 @@ function reqParams(params) {
 
     if (params['emails'] !== undefined) {
         let emails = params['emails'];
+        if(emails.length === 0){
+            return "invalid email values";
+        }
         for (obj of emails) {
             if (!obj.val || obj.val.length < obj.minLen.length || obj.val.length > obj.maxLen.length) {
                 return "invalid email values";
@@ -41,6 +50,9 @@ function reqParams(params) {
 
     if (params['dates'] !== undefined) {
         let dates = params['dates'];
+        if(dates.length === 0){
+            return "invalid date values";
+        }
         for (obj of dates) {
             if (!obj.val.valueOf()) {
                 return "invalid date values";
@@ -55,6 +67,9 @@ function reqParams(params) {
 
     if (params['genders'] !== undefined) {
         let genders = params['genders'];
+        if(genders.length === 0){
+            return "invalid gender values";
+        }
         for (obj of genders) {
             if (!obj.val || obj.val !== 'M' && obj.val !== 'F' && obj.val !== 'O') {
                 return "invalid gender values";

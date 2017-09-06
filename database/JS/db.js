@@ -59,5 +59,7 @@ module.exports = {
     states_table: require('./jsFiles/states_table'),
     localities_table: require('./jsFiles/localities_table'),
     temp_users_table: require('./jsFiles/temp_users_table'),
-    users_opted_states_for_bills_table: require('./jsFiles/users_opted_states_for_bills_table')
+    users_opted_states_for_bills_table: require('./jsFiles/users_opted_states_for_bills_table'),
+    bills_ordinances_votes_table: require('./jsFiles/bills_ordinances_votes_table'),
+    opinion_polls_votes_table: require('./jsFiles/opinion_polls_votes_table'),
 };

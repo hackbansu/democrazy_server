@@ -17,21 +17,6 @@ function generateOtp() {
     return otp;
 }
 
-//function to set otp timeout and return timeout id
-//params = {identity: object(phone, otp)}
-function setTimeoutForOtp(identity) {
-    //setting timeout to discard otp
-    let timeoutTime = 180000;
-    let timeoutCb = function (err, result) {
-        if (err) {
-            console.log('error discarding otp for ', identity,
-                "\nHaving error: ", err);
-        }
-    };
-    let timeoutId = setTimeout(db.temp_users_table.deleteUsers, timeoutTime, identity, timeoutCb);
-    return timeoutId;
-}
-
 //function send otp to user
 //params = {identity: object(phone, otp), cb: function}
 function sendOtp(identity, cb) {
@@ -79,21 +64,28 @@ route.post('/sendNew', function (req, res) {
             //old user
             newEntry['user_id'] = result[0].id;
         }
-        // set timeout. Create or update user entry in temp_users and send otp
-        let timeOut = setTimeoutForOtp(newEntry);
+
+        //Create or update user entry in temp_users
         db.temp_users_table.createOrUpdateUser(newEntry, function (err, result) {
             if (err) {
-                clearTimeout(timeOut);
                 console.log(err);
                 return res.status(503).json({status: false, msg: "error in database"});
             }
-            sendOtp(newEntry, function (err, result) {
+            // set timeout
+            db.temp_users_table.setNewOtpTimeout(newEntry, function (err, result) {
                 if (err) {
                     console.log(err);
-                    return res.status(503).json({status: false, msg: "error sending otp"});
+                    return res.status(503).json({status: false, msg: "error in database"});
                 }
-                return res.status(200).json({status: true, msg: result['message']});
-            })
+                //send otp
+                sendOtp(newEntry, function (err, result) {
+                    if (err) {
+                        console.log(err);
+                        return res.status(503).json({status: false, msg: "error sending otp"});
+                    }
+                    return res.status(200).json({status: true, msg: result['message']});
+                })
+            });
         })
     });
 });

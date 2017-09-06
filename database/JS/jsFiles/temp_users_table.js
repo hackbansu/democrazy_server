@@ -64,9 +64,39 @@ function createOrUpdateUser(identity, cb) {
     })
 }
 
+//function to remove previous events and create a new mysql event to discard otp after 3 minutes
+//params = {identity: Object, cb: function}
+function setNewOtpTimeout(identity, cb) {
+    let eventName = 'otp_timeout_' + identity['phone'];
+    let sql = 'DROP EVENT IF EXISTS ' + eventName;
+    pool.getConnection(function (err, connection) {
+        if (err) {
+            return cb(err, null);
+        }
+
+        connection.query(sql, function (err, result, fields) {
+            if (err) {
+                return cb(err, null);
+            }
+            sql = 'CREATE EVENT ' + eventName + ' ' +
+                'ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 3 MINUTE ' +
+                'DO ' +
+                'DELETE FROM temp_users WHERE phone = ?';
+            connection.query(sql, [identity['phone']], function (err, result, fields) {
+                connection.release();
+                if (err) {
+                    return cb(err, null);
+                }
+                return cb(null, result);
+            })
+        })
+    })
+}
+
 
 module.exports = {
     getUsersDetails,
     deleteUsers,
-    createOrUpdateUser
+    createOrUpdateUser,
+    setNewOtpTimeout
 };

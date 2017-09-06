@@ -116,7 +116,7 @@ route.post('/loginNow', function (req, res, next) {
     passport.authenticate('local', function (err, user, info) {
         if (err) {
             console.log(err);
-            return res.status(503).json({status: false, msg: info['message']});
+            return res.status(503).json({status: false, msg: "error in database"});
         }
         if (!user) {
             return res.status(404).json({status: false, msg: info['message']});

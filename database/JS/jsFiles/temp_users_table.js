@@ -12,7 +12,6 @@ function getUsersDetails(identity, details, cb) {
         if (err) {
             return cb(err, null);
         }
-
         connection.query(sql, [details], function (err, result, fields) {
             connection.release();
             if (err) {
@@ -33,7 +32,6 @@ function deleteUsers(identity, cb) {
         if (err) {
             return cb(err, null);
         }
-
         connection.query(sql, function (err, result, fields) {
             connection.release();
             if (err) {
@@ -53,7 +51,6 @@ function createOrUpdateUser(identity, cb) {
         if (err) {
             return cb(err, null);
         }
-
         connection.query(sql, [identity, identity], function (err, result, fields) {
             connection.release();
             if (err) {
@@ -69,11 +66,11 @@ function createOrUpdateUser(identity, cb) {
 function setNewOtpTimeout(identity, cb) {
     let eventName = 'otp_timeout_' + identity['phone'];
     let sql = 'DROP EVENT IF EXISTS ' + eventName;
+
     pool.getConnection(function (err, connection) {
         if (err) {
             return cb(err, null);
         }
-
         connection.query(sql, function (err, result, fields) {
             if (err) {
                 return cb(err, null);
@@ -99,6 +96,7 @@ function runOtpTimeoutNow(identity, cb) {
     let eventName = 'otp_timeout_' + identity['phone'];
     let sql = 'ALTER EVENT ' + eventName + " " +
         'ON SCHEDULE AT CURRENT_TIMESTAMP';
+
     pool.getConnection(function (err, connection) {
         if (err) {
             return cb(err, null);

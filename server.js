@@ -10,11 +10,11 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 const routes = {
     login: require('./routes/login/login'),
-    unSecure: require('./routes/unSecure/unSecure')
+    unSecure: require('./routes/login/unSecure/unSecure')
 };
 
 app.use(function (req, res, next) {
-    console.log("ip: " + req.ip, " \turl: " + req.url, " \ttime: " + new Date().toLocaleString());
+    console.log("ip: " + req.ip, " \ttime: " + new Date().toLocaleString(), " \turl: " + req.url);
     next();
 });
 app.use('/login', routes.login);

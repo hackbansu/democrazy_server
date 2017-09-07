@@ -11,6 +11,7 @@ function getBillsAndOrdinances(type, state_central_ids, offset, count, cb) {
     sql += 'SELECT id, name, date, state_central_id FROM bills_ordinances ' +
         'WHERE type = ? AND state_central_id IN (?) ORDER BY date desc LIMIT ?,? ';
     sql += ") as t1 LEFT JOIN states ON t1.state_central_id = states.id";
+
     pool.getConnection(function (err, connection) {
         if (err) {
             return cb(err, null);
@@ -28,17 +29,17 @@ function getBillsAndOrdinances(type, state_central_ids, offset, count, cb) {
 }
 
 
-//function to serve all details of bill/ordinance
+//function to serve all details of bill/ordinance along with poll question
 //params = {id, cb: function}
 function getBillOrdinanceDetails(id, cb) {
+    let sql = "SELECT t1.*, t2.question AS question FROM ( ";
+    sql += 'SELECT * FROM bills_ordinances WHERE id = ? ';
+    sql += ") as t1 LEFT JOIN bill_ordinance_question AS t2 ON t1.type = t2.type ";
+
     pool.getConnection(function (err, connection) {
         if (err) {
             return cb(err, null);
         }
-
-        let sql = "SELECT t1.*, states.name AS state FROM ( ";
-        sql += 'SELECT * FROM bills_ordinances WHERE id = ? ';
-        sql += ") as t1 LEFT JOIN states ON t1.state_central_id = states.id ";
         connection.query(sql, [id], function (err, result, fields) {
             connection.release();
             if (err) {

@@ -62,4 +62,5 @@ module.exports = {
     users_opted_states_for_bills_table: require('./jsFiles/users_opted_states_for_bills_table'),
     bills_ordinances_votes_table: require('./jsFiles/bills_ordinances_votes_table'),
     opinion_polls_votes_table: require('./jsFiles/opinion_polls_votes_table'),
+    bill_ordinance_question_table: require('./jsFiles/bill_ordinance_question_table'),
 };

@@ -8,7 +8,8 @@ const db = require('./../../database/JS/db');
 const validateReqParams = require('../../myJsModules/validation/reqParams');
 const routes = {
     otp: require('./jsFiles/otp'),
-    secure: require('./secure/secure')
+    secure: require('./secure/secure'),
+    unSecure: require('./unSecure/unSecure'),
 };
 
 passport.use(new LocalStrategy({
@@ -42,24 +43,26 @@ passport.use(new LocalStrategy({
         //removing the entry from temp_users table
         db.temp_users_table.runOtpTimeoutNow(identity, function (err, result) {
             if (err) {
-                return cb(err, false, {message: "error in database"});
+                //ignoring because it could be due to unavailability of the timeout event
+                // return cb(err, false, {message: "error in database"});
             }
             if (tempUser.user_id) {
                 //old user
                 //retrieve the user data and send in response
-                db.users_table.getUsersDetails({id: tempUser.user_id}, ["*"], function (err, result) {
-                    if (err) {
-                        return cb(err, false, {message: "error in database"});
-                    }
-                    if (result.length === 0) {
-                        return cb("error", false, {message: "error in database"});
-                    }
-                    if (result[0]['fullName']) {
-                        return cb(null, {id: result[0]['id']}, {message: result[0]});
-                    } else {
-                        return cb(null, {id: result[0]['id']}, {message: "request other details"});
-                    }
-                })
+                // db.users_table.getUsersDetails({id: tempUser.user_id}, ["*"], function (err, result) {
+                //     if (err) {
+                //         return cb(err, false, {message: "error in database"});
+                //     }
+                //     if (result.length === 0) {
+                //         return cb("error", false, {message: "error in database"});
+                //     }
+                //     if (result[0]['fullName']) {
+                //         return cb(null, {id: result[0]['id']}, {message: "old user"});
+                //     } else {
+                //         return cb(null, {id: result[0]['id']}, {message: "request other details"});
+                //     }
+                // })
+                return cb(null, {id: tempUser.user_id}, {message: "old user"});
             } else {
                 //new user
                 //creating new user in users table
@@ -67,7 +70,6 @@ passport.use(new LocalStrategy({
                     if (err) {
                         return cb(err, false, {message: "error in database"});
                     }
-
                     return cb(null, {id: result['insertId']}, {message: "request other details"});
                 })
             }
@@ -103,6 +105,7 @@ route.use(passport.session());
 
 //handling requests of logged in user
 route.use('/secure', routes.secure);
+route.use('/unSecure', routes.unSecure);
 
 
 //handling login related requests
@@ -132,6 +135,9 @@ route.post('/loginNow', function (req, res, next) {
             if (err) {
                 console.log(err);
                 return res.status(503).json({status: false, msg: "error in database"});
+            }
+            if(info['message'] === "old user"){
+                return res.redirect('/login/secure/user/getDetails');
             }
             return res.status(200).json({status: true, msg: info['message']});
         });

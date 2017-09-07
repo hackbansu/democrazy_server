@@ -7,6 +7,7 @@ const routes = {
     firstLogin: require('./jsFiles/firstLogin'),
     user: require('./jsFiles/user'),
     opinionPolls: require('./jsFiles/opinionPolls'),
+    billsOrdinances: require('./jsFiles/billsOrdinances'),
 };
 
 //function to check if user is logged in or not
@@ -43,6 +44,7 @@ route.use(checkUserBasicDetails);
 
 route.use('/user', routes.user);
 route.use('/opinionPolls', routes.opinionPolls);
+route.use('/billsOrdinances', routes.billsOrdinances);
 
 function checkAdmin(req, res, next) {
     if (req['user']['phone'] === parseInt(process.env.ADMIN)) {

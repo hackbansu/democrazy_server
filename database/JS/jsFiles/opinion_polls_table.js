@@ -14,7 +14,6 @@ function getNewOpinionPolls(dateAfterwards, OP_id, stateId, details, count, cb) 
         if (err) {
             return cb(err, null);
         }
-
         connection.query(sql, [details, OP_id, dateAfterwards, stateId, count], function (err, result, fields) {
             connection.release();
             if (err) {
@@ -34,7 +33,6 @@ function getStateIdsForOPIds(OPIds, cb) {
         if (err) {
             return cb(err, null);
         }
-
         connection.query(sql, [OPIds], function (err, result, fields) {
             connection.release();
             if (err) {
@@ -63,7 +61,6 @@ function addNewOpinionPolls(data, cb) {
         if (err) {
             return cb(err, null);
         }
-
         connection.query(sql, function (err, result, fields) {
             connection.release();
             if (err) {

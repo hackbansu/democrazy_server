@@ -134,7 +134,7 @@ route.get('/changeState', function (req, res) {
         //updating users table to set new stateId, last_OP_id, attemptsLeft
         db.users_table.updateUsersDetails({id: req['user']['id']}, {
             state_id_O_Polls: newStateId,
-            last_OP_id: result[0].val,
+            last_OP_id: (result.length === 0 ? undefined : result[0].val),
             attempts_left_state_change_OP: attemptsLeft
         }, function (err, result) {
             if (err) {

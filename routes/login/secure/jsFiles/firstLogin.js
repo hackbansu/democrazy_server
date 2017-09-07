@@ -52,12 +52,21 @@ route.post('/submitDetails', function (req, res) {
                 console.log(err);
                 return res.status(503).json({status: false, msg: "error in database"});
             }
+            //set an event to reset attempts left for state change for opinion polls
             db.users_table.timerToResetSCAL({phone: req['user']['phone']}, function (err, result) {
                 if (err) {
                     console.log(err);
                     return res.status(503).json({status: false, msg: "error in database"});
                 }
-                return res.status(200).json({status: true, msg: result['message']});
+                //setting entries for user's states for bills and ordinances
+                db.users_opted_states_for_bills_table.insertEntries(req['user']['id'],
+                    [1, updates['state_id_O_Polls']], function (err, result) {
+                    if (err) {
+                        console.log(err);
+                        return res.status(503).json({status: false, msg: "error in database"});
+                    }
+                    return res.status(200).json({status: true, msg: result['message']});
+                });
             })
         })
     });

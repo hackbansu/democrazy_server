@@ -1,4 +1,4 @@
-const db = require('../../../database/JS/db');
+const db = require('../../../../database/JS/db');
 const express = require('express');
 const route = express.Router();
 

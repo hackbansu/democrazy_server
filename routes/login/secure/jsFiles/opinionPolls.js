@@ -64,9 +64,20 @@ route.post('/submitPoll', function (req, res) {
             console.log(err);
             return res.status(503).json({status: false, msg: "error in database"});
         }
-        // if (result.length !== 1 || result[0]['state_central_id'] !== req['user']['state_id_O_Polls']) {
-        //     return res.status(400).json({status: false, msg: "invalid params"});
-        // }
+        if (result.length > 2 || result.length === 0) {
+            return res.status(400).json({status: false, msg: "invalid params"});
+        } else {
+            let temp = result[0]['state_central_id'];
+            if (result.length === 1) {
+                if (temp !== req['user']['state_id_O_Polls'] && temp !== 1) {
+                    return res.status(400).json({status: false, msg: "invalid params"});
+                }
+            } else {
+                if (temp !== 1 || result[1]['state_central_id'] !== req['user']['state_id_O_Polls']) {
+                    return res.status(400).json({status: false, msg: "invalid params"});
+                }
+            }
+        }
 
         //generating data to insert into the table
         let tableData = OPIds.map(function (val, index, arr) {

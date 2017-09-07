@@ -28,7 +28,7 @@ function getNewOpinionPolls(dateAfterwards, OP_id, stateId, details, count, cb) 
 //function to serve stateIds for OPIds
 //params = {OPIds: array, cb: function}
 function getStateIdsForOPIds(OPIds, cb) {
-    let sql = 'SELECT DISTINCT state_central_id FROM opinion_polls WHERE id IN (?)';
+    let sql = 'SELECT DISTINCT state_central_id FROM opinion_polls WHERE id IN (?) ORDER BY state_central_id ';
 
     pool.getConnection(function (err, connection) {
         if (err) {

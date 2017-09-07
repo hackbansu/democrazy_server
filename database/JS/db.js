@@ -11,7 +11,7 @@ const mysql = require('mysql');
     const pool = mysql.createPool(dbPoolConf);
 
     pool.on('acquire', function (connection) {
-        console.log('Connection %d acquired', connection.threadId);
+        // console.log('Connection %d acquired', connection.threadId);
     });
 
     pool.on('connection', function (connection) {
@@ -23,7 +23,7 @@ const mysql = require('mysql');
     })
 
     pool.on('release', function (connection) {
-        console.log('Connection %d released', connection.threadId);
+        // console.log('Connection %d released', connection.threadId);
     });
 
     //exporting pool

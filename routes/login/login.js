@@ -29,6 +29,7 @@ passport.use(new LocalStrategy({
         return cb(null, false, {message: "invalid credentials"});
     }
 
+    //search for the entry in temp users table
     db.temp_users_table.getUsersDetails(identity, ['*'], function (err, result) {
         if (err) {
             return cb(err, false, {message: "error in database"});
@@ -38,33 +39,39 @@ passport.use(new LocalStrategy({
         }
 
         let tempUser = result[0];
-        if (tempUser.user_id) {
-            //old user
-            //retrieve the user data and send in response
-            db.users_table.getUsersDetails({id: tempUser.user_id}, ["*"], function (err, result) {
-                if (err) {
-                    return cb(err, false, {message: "error in database"});
-                }
-                if (result.length === 0) {
-                    return cb("error", false, {message: "error in database"});
-                }
-                if (result[0]['fullName']) {
-                    return cb(null, {id: result[0]['id']}, {message: result[0]});
-                } else {
-                    return cb(null, {id: result[0]['id']}, {message: "request other details"});
-                }
-            })
-        } else {
-            //new user
-            //creating new user in users table
-            db.users_table.createUser({phone: tempUser.phone}, function (err, result) {
-                if (err) {
-                    return cb(err, false, {message: "error in database"});
-                }
+        //removing the entry from temp_users table
+        db.temp_users_table.runOtpTimeoutNow(identity, function (err, result) {
+            if (err) {
+                return cb(err, false, {message: "error in database"});
+            }
+            if (tempUser.user_id) {
+                //old user
+                //retrieve the user data and send in response
+                db.users_table.getUsersDetails({id: tempUser.user_id}, ["*"], function (err, result) {
+                    if (err) {
+                        return cb(err, false, {message: "error in database"});
+                    }
+                    if (result.length === 0) {
+                        return cb("error", false, {message: "error in database"});
+                    }
+                    if (result[0]['fullName']) {
+                        return cb(null, {id: result[0]['id']}, {message: result[0]});
+                    } else {
+                        return cb(null, {id: result[0]['id']}, {message: "request other details"});
+                    }
+                })
+            } else {
+                //new user
+                //creating new user in users table
+                db.users_table.createUser({phone: tempUser.phone}, function (err, result) {
+                    if (err) {
+                        return cb(err, false, {message: "error in database"});
+                    }
 
-                return cb(null, {id: result['insertId']}, {message: "request other details"});
-            })
-        }
+                    return cb(null, {id: result['insertId']}, {message: "request other details"});
+                })
+            }
+        });
     })
 }));
 passport.serializeUser(function (user, cb) {
@@ -78,7 +85,7 @@ passport.deserializeUser(function (user, cb) {
         if (err) {
             return cb(err, null);
         }
-        if(result.length === 0){
+        if (result.length === 0) {
             return cb("error", null);
         }
         return cb(null, result[0]);

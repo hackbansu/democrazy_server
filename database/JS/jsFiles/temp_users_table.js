@@ -93,10 +93,31 @@ function setNewOtpTimeout(identity, cb) {
     })
 }
 
+//function to run mysql event to discard otp
+//params = {identity: Object (phone), cb: function}
+function runOtpTimeoutNow(identity, cb) {
+    let eventName = 'otp_timeout_' + identity['phone'];
+    let sql = 'ALTER EVENT ' + eventName + " " +
+        'ON SCHEDULE AT CURRENT_TIMESTAMP';
+    pool.getConnection(function (err, connection) {
+        if (err) {
+            return cb(err, null);
+        }
+        connection.query(sql, function (err, result, fields) {
+            connection.release();
+            if (err) {
+                return cb(err, null);
+            }
+            return cb(null, result);
+        })
+    })
+}
+
 
 module.exports = {
     getUsersDetails,
     deleteUsers,
     createOrUpdateUser,
-    setNewOtpTimeout
+    setNewOtpTimeout,
+    runOtpTimeoutNow
 };

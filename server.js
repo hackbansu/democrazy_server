@@ -13,14 +13,18 @@ const routes = {
     unSecure: require('./routes/unSecure/unSecure')
 };
 
+app.use(function (req, res, next) {
+    console.log("ip: " + req.ip, " \turl: " + req.url, " \ttime: " + new Date().toLocaleString());
+    next();
+});
 app.use('/login', routes.login);
 app.use('/unSecure', routes.unSecure);
 app.get('/', function (req, res) {
     res.send("server Working");
-})
+});
 app.use('/', function (req, res) {
     res.send("invalid request");
-})
+});
 
 app.listen(process.env.PORT, function () {
     console.log("server started at port number " + process.env.PORT);

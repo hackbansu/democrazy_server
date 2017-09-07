@@ -14,7 +14,7 @@ function reqParams(params) {
             return "invalid integer values";
         }
         for (obj of integ) {
-            if (!obj.val || obj.val < obj.minVal || obj.val > obj.maxVal) {
+            if (obj.val === undefined || obj.val < obj.minVal || obj.val > obj.maxVal) {
                 return "invalid integer values";
             }
         }

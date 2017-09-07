@@ -20,10 +20,10 @@ route.post('/get', function (req, res) {
     integ.push({val: offset, minVal: 0, maxVal: Number.MAX_SAFE_INTEGER});
     integ.push({val: count, minVal: 1, maxVal: 100});
     let validation = validateReqParams({integ: integ});
-    // if (validation) {
-    //     console.log(validation);
-    //     return res.status(400).json({status: false, msg: "invalid params"});
-    // }
+    if (validation) {
+        console.log(validation);
+        return res.status(400).json({status: false, msg: "invalid params"});
+    }
 
     db.bills_ordinances_table.getBillsAndOrdinances(type, state_central_ids, offset, count, function (err, result) {
         if (err) {
@@ -32,7 +32,7 @@ route.post('/get', function (req, res) {
         }
         return res.status(200).json({status: true, msg: result});
     })
-})
+});
 
 //request to get details of a bill or an ordinance via id
 //req.query = {id}

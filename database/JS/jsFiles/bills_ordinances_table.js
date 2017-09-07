@@ -7,10 +7,10 @@ const pool = db.pool;
 // of given states after an offset
 //params = {state_central_ids: array, offset, count, cb: function}
 function getBillsAndOrdinances(type, state_central_ids, offset, count, cb) {
-    let sql = "SELECT t1.*, states.name AS state FROM ( "
+    let sql = "SELECT t1.*, states.name AS state FROM ( ";
     sql += 'SELECT id, name, date, state_central_id FROM bills_ordinances ' +
-        'WHERE type = ? AND state_central_id IN ? ORDER BY date desc LIMIT ?,? ';
-    sql += ") as t1 LEFT JOIN states ON t1.state_central_id = states.id"
+        'WHERE type = ? AND state_central_id IN (?) ORDER BY date desc LIMIT ?,? ';
+    sql += ") as t1 LEFT JOIN states ON t1.state_central_id = states.id";
     pool.getConnection(function (err, connection) {
         if (err) {
             return cb(err, null);
@@ -37,8 +37,8 @@ function getBillOrdinanceDetails(id, cb) {
         }
 
         let sql = "SELECT t1.*, states.name AS state FROM ( ";
-        sql += 'SELECT * FROM bills_ordinances WHERE id = ? '
-        sql += ") as t1 LEFT JOIN states ON t1.state_central_id = states.id"
+        sql += 'SELECT * FROM bills_ordinances WHERE id = ? ';
+        sql += ") as t1 LEFT JOIN states ON t1.state_central_id = states.id ";
         connection.query(sql, [id], function (err, result, fields) {
             connection.release();
             if (err) {

@@ -1,34 +1,32 @@
 const mysql = require('mysql');
 
-{
-    const dbPoolConf = {
-        connectionLimit: 100,
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASS,
-        database: process.env.DB_DATABASE,
-    };
-    const pool = mysql.createPool(dbPoolConf);
+const dbPoolConf = {
+    connectionLimit: 100,
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_DATABASE,
+};
+const pool = mysql.createPool(dbPoolConf);
 
-    pool.on('acquire', function (connection) {
-        // console.log('Connection %d acquired', connection.threadId);
-    });
+pool.on('acquire', function (connection) {
+    // console.log('Connection %d acquired', connection.threadId);
+});
 
-    pool.on('connection', function (connection) {
-        connection.query('SET SESSION auto_increment_increment=1')
-    });
+pool.on('connection', function (connection) {
+    connection.query('SET SESSION auto_increment_increment=1')
+});
 
-    pool.on('enqueue', function () {
-        console.log('Waiting for available connections slot');
-    })
+pool.on('enqueue', function () {
+    console.log('Waiting for available connections slot');
+})
 
-    pool.on('release', function (connection) {
-        // console.log('Connection %d released', connection.threadId);
-    });
+pool.on('release', function (connection) {
+    // console.log('Connection %d released', connection.threadId);
+});
 
-    //exporting pool
-    module.exports.pool = pool;
-}
+//exporting pool
+module.exports.pool = pool;
 
 function addWhereClause(sql, identity) {
     sql += "WHERE ";
@@ -47,8 +45,8 @@ function addWhereClause(sql, identity) {
 
     return sql;
 }
-module.exports.addWhereClause = addWhereClause;
 
+module.exports.addWhereClause = addWhereClause;
 
 
 //exporting things

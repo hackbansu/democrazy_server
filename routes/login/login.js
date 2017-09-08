@@ -3,14 +3,23 @@ const route = express.Router();
 const cookieParser = require('cookie-parser');
 const passport = require('passport'), passportLocal = require('passport-local');
 const session = require('express-session');
-const LocalStrategy = passportLocal.Strategy;
+const MySQLStore = require('express-mysql-session')(session);
 const db = require('./../../database/JS/db');
 const validateReqParams = require('../../myJsModules/validation/reqParams');
+
+const LocalStrategy = passportLocal.Strategy;
 const routes = {
     otp: require('./jsFiles/otp'),
     secure: require('./secure/secure'),
     unSecure: require('./unSecure/unSecure'),
 };
+const dbConf = {
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_DATABASE,
+};
+const sessionStore = new MySQLStore(dbConf);
 
 passport.use(new LocalStrategy({
     usernameField: 'phone',
@@ -97,6 +106,7 @@ passport.deserializeUser(function (user, cb) {
 route.use(cookieParser(process.env.EXPRESS_SESSION_SECRET));
 route.use(session({
     secret: process.env.EXPRESS_SESSION_SECRET,
+    store: sessionStore,
     resave: false,
     saveUninitialized: false,
 }));

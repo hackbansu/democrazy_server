@@ -27,17 +27,59 @@ route.post('/addNewOpinionPolls', function (req, res) {
     }
 
     let data = questions.map(function (val) {
-       return {question: val, SCId, dateStart, dateEnd};
+        return {question: val, SCId, dateStart, dateEnd};
     });
 
-    db.opinion_polls_table.addNewOpinionPolls(data,function (err, result) {
+    db.opinion_polls_table.addNewOpinionPolls(data, function (err, result) {
         if (err) {
             console.log(err);
             return res.status(503).json({status: false, msg: "error in database"});
         }
         return res.status(200).json({status: true, msg: result["message"]});
     })
-})
-;
+});
+
+//function to add new bill or ordinance
+//req.body (JSON body) = {phone, identity: Object containing details of bill/ordinance
+// (name, date("yyyy-mm-dd"), type, state_central_id, synopsis, pros, cons, newspaper_articles_links)
+route.post('/addNewBillOrdinance', function (req, res) {
+    let identity = req.body['identity'];
+    identity['date'] = new Date(identity['date']);
+
+    //validation of params (ques, SCId)
+    let validation = validateReqParams({
+        dates: [{val: identity.date, above18: false}],
+        integ: [{val: identity['type'], minVal: 0, maxVal: 3},
+            {val: identity['state_central_id'], minVal: 1, maxVal: 100}],
+        strs: [{val: identity['name'], minLen: 1, maxLen: 150},
+            {val: identity['synopsis'], minLen: 1, maxLen: Number.MAX_SAFE_INTEGER},
+            {val: identity['pros'], minLen: 1, maxLen: Number.MAX_SAFE_INTEGER},
+            {val: identity['cons'], minLen: 1, maxLen: Number.MAX_SAFE_INTEGER},
+            {val: identity['newspaper_articles_links'], minLen: 1, maxLen: Number.MAX_SAFE_INTEGER}]
+    });
+    if (validation) {
+        console.log(validation);
+        return res.status(400).json({status: false, msg: "invalid params"});
+    }
+
+    db.bills_ordinances_table.getMaxId(function (err, result) {
+        if (err) {
+            console.log(err);
+            return res.status(503).json({status: false, msg: "error in database"});
+        }
+        if (result.length === 0) {
+            identity['actual_bill_link'] = '/login/unSecure/1.pdf';
+        } else {
+            identity['actual_bill_link'] = '/login/unSecure/' + (result[0]['mId'] + 1) + '.pdf';
+        }
+        db.bills_ordinances_table.insertNew(identity, function (err, result) {
+            if (err) {
+                console.log(err);
+                return res.status(503).json({status: false, msg: "error in database"});
+            }
+            return res.status(200).json({status: true, msg: result["message"]});
+        })
+    });
+});
 
 module.exports = route;

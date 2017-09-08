@@ -3,7 +3,7 @@
     <array for integers> integ: [{val: 22, minVal: 0, maxVal: 100}, {...}, ...]
     <array for strings> strs: [{val: "ad", minLen: 0, maxLen: 100}, {...}, ...]
     <array for emails> emails: [{val: "a@d.c", minLen: 0, maxLen: 100}, {...}, ...]
-    <array for dates> dates: [{val: "yyyy-mm-dd", above18: boolean}, {...}, ...]
+    <array for dates> dates: [{val: nodeJs Date, above18: boolean}, {...}, ...]
     <array for genders> genders: [{val: "M/F/O"}, {...}, ...]
  }
  */

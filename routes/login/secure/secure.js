@@ -15,16 +15,16 @@ const routes = {
 function checkUser(req, res, next) {
     if (req['user']) {
         if (Object.keys(req.body).length === 0) {
-            console.log("User authenticated for get request at " + route.baseUrl);
+            console.log("User authenticated for get request at " + route.url);
             return next();
         }
         let phone = parseInt(req.body.phone);
         if (phone === req['user']['phone']) {
-            console.log("User authenticated for post request at " + route.baseUrl);
+            console.log("User authenticated for post request at " + route.url);
             return next();
         }
     }
-    console.log("User NOT authenticated at " + route.baseUrl);
+    console.log("User NOT authenticated at " + route.url);
     return res.status(401).json({status: false, msg: "user not logged in"});
 }
 

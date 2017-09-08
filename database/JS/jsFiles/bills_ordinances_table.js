@@ -28,7 +28,6 @@ function getBillsAndOrdinances(type, state_central_ids, offset, count, cb) {
     });
 }
 
-
 //function to serve all details of bill/ordinance along with poll question
 //params = {id, cb: function}
 function getBillOrdinanceDetails(id, cb) {
@@ -50,7 +49,47 @@ function getBillOrdinanceDetails(id, cb) {
     })
 }
 
+//function to insert a new bill or ordinance with specified details
+//params = {identity: Object, cb: function}
+function insertNew(identity, cb) {
+    let sql = 'INSERT INTO bills_ordinances SET ? ';
+
+    pool.getConnection(function (err, connection) {
+        if (err) {
+            return cb(err, null);
+        }
+        connection.query(sql, [identity], function (err, result, fields) {
+            connection.release();
+            if (err) {
+                return cb(err, null);
+            }
+            return cb(null, result);
+        })
+    })
+}
+
+//function to serve max id in table
+//params = {cb: function}
+function getMaxId(cb) {
+    let sql = 'SELECT MAX(id) AS mId FROM bills_ordinances ';
+
+    pool.getConnection(function (err, connection) {
+        if (err) {
+            return cb(err, null);
+        }
+        connection.query(sql, function (err, result, fields) {
+            connection.release();
+            if (err) {
+                return cb(err, null);
+            }
+            return cb(null, result);
+        })
+    })
+}
+
 module.exports = {
     getBillsAndOrdinances,
-    getBillOrdinanceDetails
+    getBillOrdinanceDetails,
+    insertNew,
+    getMaxId,
 };

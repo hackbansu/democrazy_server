@@ -11,7 +11,6 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 const routes = {
     login: require('./routes/login/login'),
-    unSecure: require('./routes/login/unSecure/unSecure')
 };
 
 app.use(function (req, res, next) {
@@ -19,7 +18,6 @@ app.use(function (req, res, next) {
     next();
 });
 app.use('/login', routes.login);
-app.use('/unSecure', routes.unSecure);
 app.get('/', function (req, res) {
     res.send("server Working");
 });

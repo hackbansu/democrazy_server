@@ -8,7 +8,7 @@ const validateReqParams = require('../../../../myJsModules/validation/reqParams'
 //function to update the states(including central) user opted for bills and ordinances
 //req.query = {phone ,SCIds: array of integers}
 route.post('/updateStates', function (req, res) {
-    let SCIds = JSON.parse(req['user']['SCIds']);
+    let SCIds = JSON.parse(req.body['SCIds']);
 
     //validation of params (SCIds)
     let integ = SCIds.map(function (val) {

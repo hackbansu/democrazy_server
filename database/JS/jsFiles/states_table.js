@@ -9,7 +9,7 @@ function getAllStates(cb) {
         if (err) {
             return cb(err, null);
         }
-        connection.query('SELECT * FROM states', function (err, result, fields) {
+        connection.query('SELECT * FROM states ORDER BY id', function (err, result, fields) {
             connection.release();
             if (err) {
                 return cb(err, null);

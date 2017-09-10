@@ -132,9 +132,6 @@ route.post('/loginNow', function (req, res, next) {
                 console.log(err);
                 return res.status(503).json({status: false, msg: "error in database"});
             }
-            if(info['message'] === "old user"){
-                return res.status(200).json({status: true, msg: info['message']});
-            }
             return res.status(200).json({status: true, msg: info['message']});
         });
     })(req, res, next);

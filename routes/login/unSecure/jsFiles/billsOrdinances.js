@@ -5,7 +5,7 @@ const validateReqParams = require('../../../../myJsModules/validation/reqParams'
 
 //request to get count number of latest bills/ordinances of given states after an offset
 //req.body = {type (0: pending bills, 1: passed bills, 2: enacted ordinances, 3: lapsed ordinances),
-//              state_central_ids: array, offset, count}
+//              SCId: array, offset, count}
 route.post('/get', function (req, res) {
     let type = parseInt(req.body.type);
     let state_central_ids = JSON.parse(req.body.SCId);

@@ -15,6 +15,6 @@ route.get('/getAllStates', function (req, res) {
         }
         return res.status(200).json({status: true, msg: result});
     })
-})
+});
 
 module.exports = route;

@@ -57,20 +57,6 @@ passport.use(new LocalStrategy({
             }
             if (tempUser.user_id) {
                 //old user
-                //retrieve the user data and send in response
-                // db.users_table.getUsersDetails({id: tempUser.user_id}, ["*"], function (err, result) {
-                //     if (err) {
-                //         return cb(err, false, {message: "error in database"});
-                //     }
-                //     if (result.length === 0) {
-                //         return cb("error", false, {message: "error in database"});
-                //     }
-                //     if (result[0]['fullName']) {
-                //         return cb(null, {id: result[0]['id']}, {message: "old user"});
-                //     } else {
-                //         return cb(null, {id: result[0]['id']}, {message: "request other details"});
-                //     }
-                // })
                 return cb(null, {id: tempUser.user_id}, {message: "old user"});
             } else {
                 //new user
@@ -147,7 +133,7 @@ route.post('/loginNow', function (req, res, next) {
                 return res.status(503).json({status: false, msg: "error in database"});
             }
             if(info['message'] === "old user"){
-                return res.redirect('/login/secure/user/getDetails');
+                return res.status(200).json({status: true, msg: info['message']});
             }
             return res.status(200).json({status: true, msg: info['message']});
         });

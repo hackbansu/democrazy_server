@@ -23,7 +23,27 @@ function getVotes(identity, details, cb) {
     })
 }
 
+//function to add new vote of a user
+//params = {identity: Object (userId, BOId, vote), cb: function}
+function addVote(identity, cb) {
+    let dateOfSub = new Date();
+    let sql = 'INSERT INTO bills_ordinances_votes SET ? ';
+
+    pool.getConnection(function (err, connection) {
+        if (err) {
+            return cb(err, null);
+        }
+        connection.query(sql, [identity], function (err, result, fields) {
+            connection.release();
+            if (err) {
+                return cb(err, null);
+            }
+            return cb(null, result);
+        })
+    })
+}
 
 module.exports = {
     getVotes,
+    addVote,
 };

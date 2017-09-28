@@ -22,7 +22,7 @@ function generateOtp() {
 function sendOtp(identity, cb) {
     //sending otp
     let params = {
-        'src': 'democrazy', // Sender's phone number with country code
+        'src': process.env.PLIVO_SRC, // Sender's phone number with country code
         'dst': '+91' + identity['phone'], // Receiver's phone Number with country code
         'text': "Hi, your otp for democrazy is: " + identity['otp'] + " valid for 3 minutes only", // Your SMS Text Message - English
     };

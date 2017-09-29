@@ -47,7 +47,9 @@ route.use('/opinionPolls', routes.opinionPolls);
 route.use('/billsOrdinances', routes.billsOrdinances);
 
 function checkAdmin(req, res, next) {
-    if (req['user']['phone'] === parseInt(process.env.ADMIN)) {
+    let admPh = req['user']['phone'];   //admin phone number
+    let penv = process.env;
+    if (admPh === parseInt(penv.ADMIN1) || admPh === parseInt(penv.ADMIN2) || admPh === parseInt(penv.ADMIN3)) {
         return next();
     } else {
         return res.status(403).json({status: false, msg: "user not logged in"});

@@ -82,4 +82,41 @@ route.post('/addNewBillOrdinance', function (req, res) {
     });
 });
 
+
+//function to reset last opinion poll id and remove corresponding entries from votes table
+//req.query = {newOPId}
+route.get('/resetOPIdAndEntries', function (req, res) {
+    let newOPId = req.query['newOPId'];
+    let identity = {
+        id: req['user']['id']
+    };
+
+    //validation of params (ques, SCId)
+    let validation = validateReqParams({
+        integ: [{val: newOPId, minVal: 0, maxVal: Number.MAX_SAFE_INTEGER}]
+    });
+    if (validation) {
+        console.log(validation);
+        return res.status(400).json({status: false, msg: "invalid params"});
+    }
+
+    //updating users table to set last_OP_id to newOPId
+    db.users_table.updateUsersDetails(identity, {last_OP_id: newOPId}, function (err, result) {
+        if (err) {
+            console.log(err);
+            return res.status(503).json({status: false, msg: "error in database"});
+        }
+        let identity2 = {
+            user_id: req['user']['id']
+        };
+        db.opinion_polls_votes_table.deleteVotes(identity2, newOPId, function (err, result) {
+            if (err) {
+                console.log(err);
+                return res.status(503).json({status: false, msg: "error in database"});
+            }
+            return res.status(200).json({status: true, msg: result["message"]});
+        })
+    });
+});
+
 module.exports = route;

@@ -56,7 +56,50 @@ function getLastOPIdOfState(userId, stateId, cb) {
 }
 
 
+//function to update votes
+//params = {identity: Object, updates: Object, cb: function}
+function updateVotes(identity, updates, cb) {
+    let sql = 'UPDATE opinion_polls_votes SET ? ';
+    sql = db.addWhereClause(sql, identity);
+
+    pool.getConnection(function (err, connection) {
+        if (err) {
+            return cb(err, null);
+        }
+        connection.query(sql, [updates], function (err, result, fields) {
+            connection.release();
+            if (err) {
+                return cb(err, null);
+            }
+            return cb(null, result);
+        })
+    })
+}
+
+//function to delete (for an identity) all votes greater than OPId
+//params = {identity: Object, OPId: integer, cb: function}
+function deleteVotes(identity, OPId, cb) {
+    let sql = 'DELETE FROM opinion_polls_votes ';
+    sql = db.addWhereClause(sql, identity);
+    sql += ' and opinion_poll_id > ? ';
+
+    pool.getConnection(function (err, connection) {
+        if (err) {
+            return cb(err, null);
+        }
+        connection.query(sql, [OPId], function (err, result, fields) {
+            connection.release();
+            if (err) {
+                return cb(err, null);
+            }
+            return cb(null, result);
+        })
+    })
+}
+
 module.exports = {
     addVotes,
-    getLastOPIdOfState
+    getLastOPIdOfState,
+    updateVotes,
+    deleteVotes
 };

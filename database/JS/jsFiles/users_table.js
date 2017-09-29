@@ -23,7 +23,7 @@ function getUsersDetails(identity, details, cb) {
     })
 }
 
-//function to serve a user's specified details
+//function to update user's details
 //params = {identity: Object, updates: Object, cb: function}
 function updateUsersDetails(identity, updates, cb) {
     let sql = 'UPDATE users SET ? ';
@@ -53,7 +53,7 @@ function deleteUsers(identity, cb) {
         if (err) {
             return cb(err, null);
         }
-        connection.query(sql, [updates], function (err, result, fields) {
+        connection.query(sql, function (err, result, fields) {
             connection.release();
             if (err) {
                 return cb(err, null);

@@ -48,7 +48,7 @@ route.post('/sendNew', function (req, res) {
     }
 
     if(req.body.phone === "1234567899"){
-        return res.status(200).json({status: true, msg: ''});
+        return res.status(200).json({status: true, msg: 'message(s) queued'});
     }
 
     //generating an OTP

@@ -47,7 +47,19 @@ route.post('/sendNew', function (req, res) {
         return res.status(400).json({status: false, msg: "invalid params"});
     }
 
-    if(req.body.phone === "1234567899"){
+    if (req.body.phone === "1234567899") {
+        //sending notification that demo user logged in
+        let params = {
+            'src': process.env.PLIVO_SRC,    // Sender's phone number with country code
+            'dst': '+918130704177',     // Receiver's phone Number with country code
+            'text': "Hi, a demo user logging in",    // Your SMS Text Message - English
+        };
+
+        smsService.send_message(params, function (status, response) {
+            if (status !== 202) {
+                console.log(status, response);
+            }
+        });
         return res.status(200).json({status: true, msg: 'message(s) queued'});
     }
 
